@@ -1,0 +1,213 @@
+#include<stdio.h>
+#include<stdlib.h>
+int c=0,a,b,l=0;
+int m[10][10]={
+{1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+{1, 0, 1, 1, 0, 1, 0, 0, 1, 1},
+{1, 1, 0, 0, 1, 0, 0, 0, 1, 0},
+{1, 0, 1, 1, 1, 1, 1, 1, 0, 1},
+{1, 1, 1, 1, 1, 1, 0, 0, 0, 1},
+{1, 1, 1, 1, 1, 1, 0, 1, 0, 1},
+{0, 0, 1, 1, 1, 1, 1, 0, 0, 1},
+{0, 0, 1, 0, 1, 0, 0, 1, 1, 1},
+{0, 0, 1, 0, 1, 1, 1, 1, 0, 1},
+{0, 0, 1, 1, 1, 0, 0, 1, 0, 1}};
+/*int m[3][3]={{0,1,1},{0,0,1},{1,1.0}};*/
+/*int m[10][10]={{1,1,1,1,1,1,1,0,0,0},
+{1,0,1,1,0,0,0,0,0,0},
+{1,1,0,0,1,1,0,0,0,0},
+{1,0,1,1,1,1,1,1,1,1},
+{1,1,1,1,1,1,0,0,0,0},
+{1,1,1,1,1,1,1,1,1,1},
+{0,0,0,0,1,1,1,0,0,0},
+{0,0,0,0,1,0,0,1,1,1},
+{0,0,0,0,1,1,1,1,0,1},
+{0,0,0,1,1,1,1,1,0,1}};*/
+
+struct node
+{
+    int x;
+    int y;
+    struct node *next;
+};
+struct node *base=NULL,*top=NULL;
+void push(int i, int j)
+{
+    //printf("%d\n",c);
+    struct node *p=malloc(sizeof(struct node));
+    p->x=i;
+    p->y=j;
+    p->next=NULL;
+    if(c==0)
+    {
+        base=p;
+        top=p;
+    }
+    else
+    {
+        top->next=p;
+        top=p;
+    }
+    c++;
+}
+void pop(int *i, int *j)
+{
+    //printf("%d\n",c);
+    if(c==0)
+    {
+        printf("No path available\n");
+        exit(0);
+        return;
+    }
+    else
+    {
+        struct node *p=top;
+        if(c==1)
+        {
+            *i=top->x;
+            *j=top->y;
+            top=base=NULL;
+            free(p);
+        }
+        else
+        {
+            *i=top->x;
+            *j=top->y;
+            p=base;
+            while(p->next->next!=NULL)
+                p=p->next;
+            free(top);
+            top=p;
+            top->next=NULL;
+        }
+        c--;
+    }
+}
+int goRight()
+{
+    printf("Its in right %d\n",m[a][b+1]);
+    if(b==9)
+        return 0;
+    else if(m[a][b+1]==1)
+    {
+        printf("%d,%d  Right\n",a,b);
+        if(l==1)
+            push(a,b);
+        m[a][b]=2;
+        b++;
+        push(a,b);
+        return 1;
+    }
+    else
+        return 0;
+
+}
+int goLeft()
+{
+    printf("Its in left %d\n",m[a][b-1]);
+    if(b==0)
+        return 0;
+    else if(m[a][b-1]==1)
+    {
+        printf("%d,%d  Left\n",a,b);
+        if(l==1)
+            push(a,b);
+        m[a][b]=2;
+        b--;
+        push(a,b);
+        return 1;
+    }
+    else
+        return 0;
+}
+int goDown()
+{
+    printf("Its in down %d\n",m[a+1][b]);
+    if(a==9)
+        return 0;
+    else if(m[a+1][b]==1)
+    {
+        printf("%d,%d  Down\n",a,b);
+        if(l==1)
+            push(a,b);
+        m[a][b]=2;
+        a++;
+        push(a,b);
+        return 1;
+    }
+    else
+        return 0;
+}
+int goUp()
+{
+    printf("Its in up %d\n",m[a-1][b]);
+    if(a==0)
+        return 0;
+    else if(m[a-1][b]==1)
+    {
+        printf("%d,%d  Up\n",a,b);
+        if(l==1)
+            push(a,b);
+        m[a][b]=2;
+        a--;
+        push(a,b);
+        return 1;
+    }
+    else
+        return 0;
+}
+void retrace()
+{
+    printf("Its in retrace\n");
+    m[a][b]=3;
+    pop(&a,&b);
+    l=1;
+    //m[a][b]++;
+}
+void main()
+{
+    int flag,i,j,g;
+    if(m[0][0]==1)
+        push(0,0);
+    else
+    {
+        printf("No start to path available\n");
+        exit(0);
+    }
+    for(a=0,b=0;(a<9||b<9);)
+    {
+        g++;
+            flag=goRight();
+            if(flag==0)
+                flag=goDown();
+            if(flag==0)
+                flag=goLeft();
+            if(flag==0)
+                flag=goUp();
+            l=0;
+            if(flag==0)
+                retrace();
+            flag=0;
+            printf("%d,%d\n",a,b);
+            //if(g>150)
+                //break;
+    }
+    printf("Its out\n");
+    for(i=0;i<10;i++)
+    {
+        for(j=0;j<10;j++)
+        {
+            //if(m[i][j]==2)
+            printf("%d\t",m[i][j]);
+        }
+        printf("\n");
+    }
+    struct node *p=base;
+    int k=0;
+    while(p!=NULL)
+    {
+        //printf("Its in loop\n");
+        printf("%d,%d\n",p->x,p->y);
+        p=p->next;
+    }
+}
