@@ -1,0 +1,60 @@
+#include<stdio.h>
+#include<stdlib.h>
+int max(int a, int b);
+main()
+{
+    char x[]="human";
+    char y[]="chimpanzee";
+    int m=strlen(x);
+    int n=strlen(y);
+    lcs(x,y,m,n);
+}
+int maximum(int a, int b)
+{
+    return (a > b)? a : b;
+}
+void lcs(char* x,char* y,int m,int n)
+{
+    int l[m+1][n+1];
+    int i,j;
+    for(i=0;i<=m;i++)
+    {
+        for(j=0;j<=n;j++)
+        {
+            if(i==0 || j==0)
+            {
+                l[i][j]=0;
+            }
+            else if(x[i-1]==y[j-1]){
+                l[i][j]=l[i-1][j-1]+1;
+            }
+            else{
+                l[i][j]=maximum(l[i][j-1],l[i-1][j]);
+            }
+        }
+    }
+    int index=l[m][n];
+    char ans[index+1];
+    ans[index]='\0';
+    int k=0;
+    int p=0;
+    for(i=0;i<=m;i++)
+    {
+        for(j=0;j<=n;j++)
+        {
+            if(l[i][j]==p+1)
+            {
+                ans[k]=x[i-1];
+                k++;
+                p++;
+                break;
+            }
+        }
+    }
+    i=0;
+    while(ans[i]!='\0')
+    {
+        printf("%c",ans[i]);
+        i++;
+    }
+}
